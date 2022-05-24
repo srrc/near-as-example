@@ -1,11 +1,13 @@
-import { PostedTask, postTasks, RatingToken } from './model';
+import { context, u128, PersistentVector, ContractPromise } from "near-sdk-as";
+import { PostedTask, postTasks, TokenArg } from './model';
+import { AccountId } from "../../utils";
 
 // --- contract code goes below
 
 // The maximum number of latest tasks the contract returns.
 const TASK_LIMIT = 10;
 
-const TOKEN_CONTRACT_ACCOUNT = xxx;
+const TOKEN_CONTRACT_ACCOUNT: string = 'dev-1234421';
 
 /**
  * Adds a new task under the name of the sender's account id.\
@@ -33,25 +35,26 @@ export function getTasks(): PostedTask[] {
   return result;
 }
 
-//申请者竞标参与任务，index是任务列表序号
-export function apply(index: u32): void {
+
+export function apply(index: i32): void {
   assert(index < postTasks.length , "Task not exists");
   assert(context.sender != postTasks[index].sender, "Can not apply yourself's task");
   postTasks[index].applicants.push(context.sender);
 }
 
-//向某一个申请者帐号转帐并生成RatingToken（调用RatingContract的mint函数）
-export function ratingAndTransfer(index:u32, receiver:AccountId, rating:u8, comment:string): void {
+
+export function ratingAndTransfer(index:i32, receiver:AccountId, rating:u8, comment:string): void {
   assert(context.sender == postTasks[index].sender, "Only proposer can send!");
-  assert(!postTask[index].applicants.include(receiver), "Invalid receiver!");
-  let token_id = "comment_" + context.sender + "_" + receiver + index;
-  let tokenArgs: TokenArg = { token_id, receiver, comment, rating };
+  assert(!postTasks[index].applicants.includes(receiver), "Invalid receiver!");
+  //let seq:Number = index;
+  let token_id = "comment_" + context.sender + "_" + receiver;// + seq.toString();
+  const tokenArgs: TokenArg = { id: token_id, grantee: receiver, text: comment, rating};
   //TODO sending deposit to receiver
   ContractPromise.create(
     TOKEN_CONTRACT_ACCOUNT, 
     'mint', // target method name
     tokenArgs.encode(), // target method arguments
-    25_000_000_000 // gas attached to the call
+    25_000_000_000_000 // gas attached to the call
     // projectBudget             // deposit attached to the call
   );  
 }

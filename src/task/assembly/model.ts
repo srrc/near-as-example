@@ -1,24 +1,30 @@
 import { context, u128, PersistentVector } from "near-sdk-as";
-import { AccountId } from "../../utils.ts";
+import { AccountId } from "../../utils";
 
 /** 
  * Exporting a new class PostedTask so it can be used outside of this file.
  */
 @nearBindgen
 export class PostedTask {
-  msg: string;
-  balance: u64;
-  createdAt: Date;
+  balance: u128;
+  createdAt: i64;
   sender: AccountId;
   applicants: Array<AccountId>;
   
   constructor(public msg: string) {
-    this.msg = msg;
     this.balance = context.attachedDeposit;
     this.sender = context.sender;
     this.createdAt = Date.now();
     this.applicants = new Array<AccountId>();
   }
+}
+
+@nearBindgen
+export class TokenArg {
+    id: string
+    grantee: AccountId
+    text: string
+    rating: u8
 }
 
 /**

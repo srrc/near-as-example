@@ -1,6 +1,6 @@
 {
   "workspaces": [
-    "src/simple",
-    "src/singleton"
+    "src/task",
+    "src/rating"
   ]
 }
