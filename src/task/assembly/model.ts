@@ -9,12 +9,14 @@ export class PostedTask {
   balance: u128;
   createdAt: i64;
   sender: AccountId;
+  finalApplicant: AccountId;
   applicants: Array<AccountId>;
-  
+    
   constructor(public msg: string) {
     this.balance = context.attachedDeposit;
     this.sender = context.sender;
     this.createdAt = Date.now();
+    this.finalApplicant = "";
     this.applicants = new Array<AccountId>();
   }
 }

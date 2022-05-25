@@ -38,14 +38,21 @@ export function getTasks(): PostedTask[] {
 
 export function apply(index: i32): void {
   assert(index < postTasks.length , "Task not exists");
+  assert(postTasks[index].finalApplicant == "", "Task is finished");
   assert(context.sender != postTasks[index].sender, "Can not apply yourself's task");
-  postTasks[index].applicants.push(context.sender);
+  assert(!postTasks[index].applicants.include(context.sender), "Can not apply twice");
+
+  //postTasks[index].applicants.push(context.sender);
+  const task = postTasks[index];
+  task.applicants.push(context.sender);
+  postTasks[index] = task;  
 }
 
 
 export function ratingAndTransfer(index:i32, receiver:AccountId, rating:u8, comment:string): void {
   assert(context.sender == postTasks[index].sender, "Only proposer can send!");
   assert(!postTasks[index].applicants.includes(receiver), "Invalid receiver!");
+  postTasks[index].finalApplicant = receiver;
   //let seq:Number = index;
   let token_id = "comment_" + context.sender + "_" + receiver;// + seq.toString();
   const tokenArgs: TokenArg = { id: token_id, grantee: receiver, text: comment, rating};
