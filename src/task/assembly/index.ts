@@ -54,7 +54,7 @@ export function ratingAndTransfer(index:i32, receiver:AccountId, rating:u8, comm
   assert(postTasks[index].applicants.includes(receiver), "Invalid receiver!");
   postTasks[index].finalApplicant = receiver;
   //let seq:Number = index;
-  let token_id = "comment_" + context.sender + "_" + receiver;// + seq.toString();
+  let token_id = "comment_" + context.sender + "_" + receiver + "_" + index.toString();
   const tokenArgs: TokenArg = { id: token_id, grantee: receiver, text: comment, rating};
   //TODO sending deposit to receiver
   ContractPromise.create(
