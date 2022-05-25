@@ -1,4 +1,4 @@
-import { context, u128, PersistentVector, ContractPromise } from "near-sdk-as";
+import { context, u128, PersistentVector, ContractPromise, ContractPromiseBatch } from "near-sdk-as";
 import { PostedTask, postTasks, TokenArg } from './model';
 import { AccountId } from "../../utils";
 
@@ -56,7 +56,7 @@ export function ratingAndTransfer(index:i32, receiver:AccountId, rating:u8, comm
   //let seq:Number = index;
   let token_id = "comment_" + context.sender + "_" + receiver + "_" + index.toString();
   const tokenArgs: TokenArg = { id: token_id, grantee: receiver, text: comment, rating};
-  //TODO sending deposit to receiver
+  ContractPromiseBatch.create(receiver).transfer(postTasks[index].balance);
   ContractPromise.create(
     TOKEN_CONTRACT_ACCOUNT, 
     'mint', // target method name
